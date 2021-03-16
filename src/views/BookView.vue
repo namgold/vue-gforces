@@ -86,7 +86,7 @@ export default {
     this.debouncedLoadBooks();
   },
   methods: {
-    loadBooks(onSuccess, onError) {
+    loadBooks() {
       this.isLoading = true;
       $.ajax({
         url: `https://www.googleapis.com/books/v1/volumes?maxResults=40&&q=${this.tableFilter ? `${this.tableFilter} ` : ''} ${this.filter.author ? `inauthor:${this.filter.author}` : 'Stephen King'} ${this.filter.title ? `intitle:${this.filter.title}` : ''} ${this.filter.categories ? `subject:${this.filter.categories}` : ''}`,
@@ -95,23 +95,15 @@ export default {
           if (Array.isArray(res.items)) {
             this.books = res.items.map(i => ({ ...i, ...i.volumeInfo }));
           } else this.books = [];
-          if (typeof onSuccess === 'function') onSuccess();
         },
         error: () => {
           this.isLoading = false;
-          if (typeof onError === 'function') onError();
         },
       });
     },
   },
   created() {
     this.debouncedLoadBooks = _.debounce(this.loadBooks, 500);
-  },
-
-  watch: {
-    filter() {
-      console.log('a');
-    },
   },
 };
 </script>
